@@ -27,7 +27,6 @@ def get_fis_env():
     env = gym.make("MountainCar-v0")
     env = env.unwrapped
     fis = Build(p, v)
-    env.seed(LOCAL_SEED)
     return env, fis
 
 
@@ -51,7 +50,7 @@ def train_env(model=None, max_eps=500):
     best_mean_rewards = []
     while iteration < max_eps:
         if done:
-            state_value = env.reset()
+            state_value, _ = env.reset()
             action = model.get_initial_action(state_value)
             rewards.append(r)
             mean_reward = np.mean(rewards[-50:])
@@ -68,7 +67,7 @@ def train_env(model=None, max_eps=500):
             model.ee_rate -= model.ee_rate * 0.01
             if model.ee_rate <= 0.2:
                 model.ee_rate = 0.2
-        state_value, reward, done, _ = env.step(action)
+        state_value, reward, done, done_1, _ = env.step(action)
         # Change the rewards to -1
         if reward == 0:
             reward = -1
